@@ -48,7 +48,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <fork>true</fork>
                     <mainClass>com.group8.ruins_of_light.App</mainClass>
                 </configuration>
                   <executions>
