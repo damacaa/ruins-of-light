@@ -50,7 +50,13 @@ let joining = false;
 
 let origin = window.location.origin; //url in browser
 //let origin = "http://localhost:8080"; //local
-let wsOrigin = origin.split("/")[2];//ngrok
+let wsOrigin = "";//ngrok
+
+if (origin.startsWith("https://")) {
+	wsOrigin = "wss://" + origin.split("/")[2];//ngrok
+} else if (origin.startsWith("http://")) {
+	wsOrigin = "ws://" + origin.split("/")[2];//ngrok
+}
 
 //WEBSOCKET
 let pConnection;
