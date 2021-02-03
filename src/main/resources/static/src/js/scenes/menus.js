@@ -632,6 +632,7 @@ class ErrorJoining extends BaseMenuScene {
 
 	SetUp() {
 		isOnline = false;
+		gameMode = 1;
 
 		this.background = this.add.image(240, 135, 'leaderBoardBackground').setOrigin(0.5, 0.5);
 		this.titleEJ = this.add.text(55, 70, "Can't connect to server", {
