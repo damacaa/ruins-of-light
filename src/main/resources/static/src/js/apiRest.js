@@ -149,11 +149,12 @@ function checkServer() {
 		if (pConnection && pConnection.readyState == 1 && inGame && gameMode == 2) { SendPlayerInfo(currentScene.player0); }
 	} else if (gameMode == 2) {
 		currentScene.LoadScene('errorJ');
-	} else {
+	}
+	/*else {
 		if (new Date() - lastTimeChecked > checkServerWait) {
 			lastTimeChecked = new Date();
 			joinGame();
 			console.log("Rejoining...");
 		}
-	}
+	}*/
 }
