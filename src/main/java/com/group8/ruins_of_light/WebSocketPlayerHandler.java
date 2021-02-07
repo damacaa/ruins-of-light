@@ -109,6 +109,16 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 			sendOtherParticipants(session, node);
 		}
 	}
+	
+	static final int ID_LEAVE = -1;
+	static final int ID_JOIN = 0;
+	static final int ID_UPDATE_PLAYER = 1;
+	static final int ID_CHANGE_SCENE = 6;
+	static final int ID_MESSAGE = 7;
+	static final int ID_NEW_ENEMY = 4;
+	static final int ID_DAMAGE = 2;
+	static final int ID_NEW_RELIC = 3;
+	static final int ID_GET_RELIC = 5;
 
 	private void sendOtherParticipants(WebSocketSession session, JsonNode node) throws IOException {
 		String sId = session.getId();
@@ -123,7 +133,7 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 		} else {
 			newNode.put("id", node.get("id").asInt());
 			switch (node.get("id").asInt()) {
-			case 1:
+			case ID_UPDATE_PLAYER:
 				// Posicion jugador
 				int time = node.get("date").asInt() - players.get(sId).lastTime;
 				if (time > 0) {
@@ -164,18 +174,18 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 					System.out.println(node.get("date").asInt() - players.get(sId).lastTime);
 				}
 				break;
-			case 2:
+			case ID_DAMAGE:
 				// Daño recibido
 				newNode.put("eId", node.get("eId").asInt());
 				newNode.put("damage", node.get("damage").asInt());
 				newNode.put("scene", node.get("scene").asText());
 				break;
-			case 3:
+			case ID_NEW_RELIC:
 				// Reliquia creada
 				newNode.put("x", node.get("x").asInt());
 				newNode.put("y", node.get("y").asInt());
 				break;
-			case 4:
+			case ID_NEW_ENEMY:
 				// Entidad creada
 				newNode.put("eId", node.get("eId").asInt());
 				newNode.put("type", node.get("type").asInt());
@@ -183,8 +193,15 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 				newNode.put("y", node.get("y").asInt());
 				newNode.put("scene", node.get("scene").asText());
 				break;
-			case 5:
+			case ID_GET_RELIC:
 				// Reliquia obtenida
+				break;
+			case ID_MESSAGE:
+				// 
+				break;
+			case ID_CHANGE_SCENE:
+				//
+				break;
 			default:
 				// code block
 			}
