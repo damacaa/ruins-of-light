@@ -49,9 +49,9 @@ let joined = false;
 let joinedRoom = false;
 let joining = false;
 
-//let origin = "https://ruins-of-light.herokuapp.com" //heroku server
+let origin = "https://ruins-of-light.herokuapp.com" //heroku server
 //let origin = window.location.origin; //url in browser
-let origin = "http://localhost:8080"; //local
+///let origin = "http://localhost:8080"; //local
 let wsOrigin = "";
 
 if (origin.startsWith("https://")) {
