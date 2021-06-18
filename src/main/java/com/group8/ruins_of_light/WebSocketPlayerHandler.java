@@ -198,6 +198,10 @@ public class WebSocketPlayerHandler extends TextWebSocketHandler {
 				break;
 			case ID_MESSAGE:
 				// 
+				newNode.put("scene", node.get("scene").asText());
+				newNode.put("value", node.get("value").asText());
+				newNode.put("x", node.get("x").asDouble());
+				newNode.put("y", node.get("y").asDouble());
 				break;
 			case ID_CHANGE_SCENE:
 				//
