@@ -385,14 +385,22 @@ class BaseScene extends Phaser.Scene {
     UpdateStage(time, delta) { }
 
     MeleeDamage(weapon, target) {
-        target.Hurt(10);
-        SendDamage(target.id, 10, this);
+        if (target.visible) {
+            target.Hurt(10);
+            if (gameMode == 2) {
+                SendDamage(target.id, 10, this);
+            }
+        }
     }
 
     ProjectileDamage(target, projectile) {
-        target.Hurt(100);
-        projectile.destroy();
-        SendDamage(target.id, 100, this);
+        if (target.visible) {
+            target.Hurt(100);
+            projectile.destroy();
+            if (gameMode == 2) {
+                SendDamage(target.id, 100, this);
+            }
+        }
     }
 
     ProjectileHitsWall(projectile, wall) {

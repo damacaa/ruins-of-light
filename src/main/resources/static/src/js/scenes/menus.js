@@ -291,6 +291,10 @@ class MainMenu extends BaseMenuScene {
             color: '#eeeeba'
         }).setOrigin(0.5).setDepth(10).setResolution(3).setInteractive();
 
+        if (!isOnline) {
+            this.online.setColor('#a6a683');
+        }
+
         this.leaderBoard = this.add.text(240, 190, 'Leaderboard', {
             fontFamily: '"PressStart2P-Regular"',
             fontSize: '16px',
@@ -315,8 +319,10 @@ class MainMenu extends BaseMenuScene {
         }, this);
 
         this.online.on('pointerdown', function (event) {
-            this.StartGame();
-            gameMode = 2;
+            if (isOnline) {
+                this.StartGame();
+                gameMode = 2;
+            }
         }, this);
 
         this.credits.on('pointerdown', function (event) {

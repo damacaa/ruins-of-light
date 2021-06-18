@@ -34,9 +34,10 @@ class Relic extends Phaser.GameObjects.Sprite {
             this.scene.sound.play("effectParrotRelic");
         }
         this.scene.camera.flash(1000);
+        if (this.scene.camera1) { this.scene.camera1.flash(1000); }
         this.visible = false;
         this.on = false;
         hasRelic = true;
-        if(inThisClient){WsGetRelic();}
+        if (inThisClient) { WsGetRelic(); }
     }
 }
