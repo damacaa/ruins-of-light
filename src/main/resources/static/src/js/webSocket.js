@@ -27,7 +27,7 @@ function ConnectWebSocket() {
 					console.log("Sala: " + data.room);
 					break;
 				case ID_UPDATE_PLAYER:
-					if (inGame && data.scene == currentIdx) {
+					if (inGame && gameMode == 2 && data.scene == currentIdx) {
 						currentScene.player1.FakeUpdate(data.x, data.y, data.health, data.anim, data.prog, data.flipX, data.date);
 						currentScene.player1.visible = true;
 					} else if (inGame) { currentScene.player1.visible = false; }

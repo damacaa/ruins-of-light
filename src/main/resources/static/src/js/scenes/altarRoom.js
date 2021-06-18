@@ -9,18 +9,71 @@ class AltarRoom extends BaseScene {
     }
 
     CreateStage() {
+
+
         switch (gameMode) {
             case 0:
                 this.player0.x = 80;
                 this.player1.x = 100;
+                this.player1.visible = false;
+
+                if (!ui.mobile) {
+                    this.controls0 = this.add.sprite(this.player0.x - 30, this.player0.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
+
+                    this.tweens.add({
+                        targets: this.controls0,
+                        y: this.controls0.y - 5,
+                        duration: 1500,
+                        ease: 'Sine.easeInOut',
+                        yoyo: true,
+                        repeat: -1
+                    });
+                }
+
+                this.camera.startFollow(this.currentPlayer, true);
                 break;
             case 1:
                 this.DisableSplitScreen();
                 this.player0.x = 80;
                 this.player1.x = 100;
+
+                //Muestra los controles
+                if (!ui.mobile) {
+                    this.controls0 = this.add.sprite(this.player0.x - 30, this.player0.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
+                    this.tweens.add({
+                        targets: this.controls0,
+                        y: this.controls0.y - 5,
+                        duration: 1500,
+                        ease: 'Sine.easeInOut',
+                        yoyo: true,
+                        repeat: -1
+                    });
+
+                    this.controls1 = this.add.sprite(this.player0.x + 62, this.player0.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
+                    this.tweens.add({
+                        targets: this.controls1,
+                        y: this.controls1.y - 5,
+                        duration: 1500,
+                        ease: 'Sine.easeInOut',
+                        yoyo: true,
+                        repeat: -1
+                    });
+                }
                 break;
             case 2:
                 if (isOrange) { this.player0.x = 80; } else { this.player0.x = 100; }
+                if (!ui.mobile) {
+                    this.controls0 = this.add.sprite(this.player0.x - 30, this.player0.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
+
+                    this.tweens.add({
+                        targets: this.controls0,
+                        y: this.controls0.y - 5,
+                        duration: 1500,
+                        ease: 'Sine.easeInOut',
+                        yoyo: true,
+                        repeat: -1
+                    });
+                }
                 break;
             default:
                 this.player0.x = 80;
@@ -40,30 +93,7 @@ class AltarRoom extends BaseScene {
         this.bowAltar.otherAltar = this.swordAltar;
         this.swordAltar.otherAltar = this.bowAltar;
 
-        //Muestra los controles
-        if (!ui.mobile) {
-            this.controls0 = this.add.sprite(this.player0.x - 30, this.player0.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
-            if (gameMode != 2) {
-                this.controls1 = this.add.sprite(this.player0.x + 62, this.player0.y - 32, 'controls').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
-                this.tweens.add({
-                    targets: this.controls1,
-                    y: this.controls1.y - 5,
-                    duration: 1500,
-                    ease: 'Sine.easeInOut',
-                    yoyo: true,
-                    repeat: -1
-                });
-            }
 
-            this.tweens.add({
-                targets: this.controls0,
-                y: this.controls0.y - 5,
-                duration: 1500,
-                ease: 'Sine.easeInOut',
-                yoyo: true,
-                repeat: -1
-            });
-        }
 
         //Crea puertas
         this.door = new SceneDoor(this, 448, 192, 'bossRoom');
@@ -109,6 +139,16 @@ class AltarRoom extends BaseScene {
                     this.door.Open();
                 } else { this.loading = false; }
             }, [], this);
+        } else if (gameMode == 0) {
+            if (this.swordAltar.activated && !this.bowAltar.activated) {
+                this.player1.Run(Math.clamp(this.bowAltar.x - this.player1.x, -1, 1));
+            } else if (!this.swordAltar.activated && this.bowAltar.activated) {
+                this.player1.Run(Math.clamp(this.swordAltar.x - this.player1.x, -1, 1));
+            } else {
+                this.player1.Run(0);
+            }
         }
     }
 }
+
+(function () { Math.clamp = function (a, b, c) { return Math.max(b, Math.min(c, a)); } })();

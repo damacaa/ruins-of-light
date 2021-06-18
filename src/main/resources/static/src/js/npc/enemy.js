@@ -65,6 +65,8 @@ class Enemy extends Phaser.GameObjects.Sprite {
   Update() {
     if (this.active) {
       if (this.canMove) {
+        this.FindTargets();
+
         if (this.body.onFloor() && this.primaryTarget.y < this.y - 16) {
           this.body.setVelocityY(-500);
         }
@@ -85,6 +87,16 @@ class Enemy extends Phaser.GameObjects.Sprite {
     this.attacking = true;
     this.setTintFill(0xff1010);
     this.scene.time.delayedCall(this.wait / 2, function () { this.attacking = false; this.clearTint(); }, [], this);
+  }
+
+  FindTargets() {
+    if (Math.abs(this.scene.swordPlayer.x - this.x) > Math.abs(this.scene.bowPlayer.x - this.x) && this.scene.bowPlayer.visible) {
+      this.primaryTarget = this.scene.bowPlayer;
+      this.secondaryTarget = this.scene.swordPlayer;
+    } else if (this.scene.swordPlayer.visible) {
+      this.primaryTarget = this.scene.swordPlayer;
+      this.secondaryTarget = this.scene.bowPlayer;
+    }
   }
 
   CheckAttacking() { return this.attacking; }
