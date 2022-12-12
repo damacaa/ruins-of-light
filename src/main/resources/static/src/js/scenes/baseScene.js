@@ -29,10 +29,12 @@ class BaseScene extends Phaser.Scene {
     constructor(key) {
         super(key);
 
-        this.player0;
-        this.player1;
+        //this.player0;
+        //this.player1;
+
         this.swordPlayer;
         this.bowPlayer;
+        this.currentPlayer;
 
         this.playerProjectiles;
         this.enemyProjectiles;
@@ -49,8 +51,6 @@ class BaseScene extends Phaser.Scene {
         sceneCount++;
 
         this.gamepad;
-
-        this.currentPlayer;
     }
 
     preload() {
@@ -75,6 +75,9 @@ class BaseScene extends Phaser.Scene {
 
         this.player0.SetWeapon(p0Weapon);
         this.players.add(this.player0);
+        this.player0.id = 0;
+        this.currentPlayer = this.player0;
+
 
         this.camera = this.cameras.main;
         this.EnableFullScreen();
@@ -85,21 +88,27 @@ class BaseScene extends Phaser.Scene {
         switch (gameMode) {
             case 0:
                 //0 single player 
-                this.player1 = new Player(this, 128, 192, 'p1noWeapon', 'p1sword', 'p1bow', p0Health);
+                this.player1 = new Player(this, 128, 192, 'p1noWeapon', 'p1sword', 'p1bow', p1Health);
                 this.player1.SetWeapon(p1Weapon);
+                this.player1.id = 1;
+                this.player1.visible = false;
                 this.players.add(this.player1);
+                this.switchingPlayer = false;
                 break;
             case 1:
                 //1 local multiplayer 
                 this.player1 = new Player(this, 0, 0, 'p1noWeapon', 'p1sword', 'p1bow', p1Health);
                 this.player1.SetWeapon(p1Weapon);
+                this.player1.id = 1;
+                this.players.add(this.player1);
+
                 //Configura las cámaras
                 this.camera.setSize(240, 270);
 
                 this.camera1 = this.cameras.add(240, 0, 240, 270);
                 this.camera1.setBackgroundColor('rgba(21, 7, 4, 1)');
 
-                this.players.add(this.player1);
+
                 if (this.swordPlayer) {
                     this.camera1.startFollow(this.swordPlayer);
                 }
@@ -116,15 +125,13 @@ class BaseScene extends Phaser.Scene {
                 }
                 this.player1.visible = false;
                 this.player1.SetWeapon(p1Weapon);
+                this.player1.id = 1;
                 break;
             default:
                 break;
         }
 
-        this.player0.id = 0;
-        this.player1.id = 1;
 
-        this.currentPlayer = this.player0;
 
         //Inputs
         this.cursors0 = this.input.keyboard.addKeys({
@@ -202,53 +209,72 @@ class BaseScene extends Phaser.Scene {
         //https://labs.phaser.io/edit.html?src=src\input\gamepad\gamepad%20debug.js
         this.gamepad = this.input.gamepad.gamepads[0];
 
-        if (this.gamepad) {
-            this.currentPlayer.Run(Math.round(this.gamepad.axes[0].value), delta);
-
-            if (this.gamepad.axes[1].value < -0.5) { this.currentPlayer.Jump(); }
-            if (this.gamepad.buttons[6].value > 0.5) { this.currentPlayer.Attack(); }
-            if (this.gamepad.buttons[6].value < 0.5) { this.currentPlayer.EnableAttack(); }
-        } else {
-            //P0
-
-
-            var keyObj = this.input.keyboard.addKey('E'); // Get key object
-
-            if (this.cursors0.up.isDown) {
-                this.currentPlayer.Jump();
-            }
-
-            if (keyObj.isDown) {
-                this.currentPlayer.Attack();
-            }
-
-            if (keyObj.isUp) {
-                this.currentPlayer.EnableAttack();
-            }
-
-            if (this.cursors0.left.isDown) {
-                this.currentPlayer.Run(-1, delta);
-            } else if (this.cursors0.right.isDown) {
-                this.currentPlayer.Run(1, delta);
-            } else {
-                this.currentPlayer.Run(0, delta);
-            }
-        }
-
         switch (gameMode) {
             case 0:
                 let switchKey = this.input.keyboard.addKey('Q');
-                if (switchKey.isDown) {
+                if (switchKey.isDown && currentIdx != "011" && !this.switchingPlayer) {
+                    this.switchingPlayer = true;
+                    this.currentPlayer.Run(0);
                     if (this.currentPlayer == this.player0) {
+                        this.player0.visible = false;
+                        this.player1.visible = true;
+                        this.player1.x = this.player0.x;
+                        this.player1.y = this.player0.y;
+                        this.player1.flipX = this.player0.flipX;
                         this.currentPlayer = this.player1;
                     } else {
+                        this.player0.visible = true;
+                        this.player1.visible = false;
+                        this.player0.x = this.player1.x;
+                        this.player0.y = this.player1.y;
+                        this.player0.flipX = this.player1.flipX;
                         this.currentPlayer = this.player0;
                     }
-                    this.camera.startFollow(this.currentPlayer);
+                    this.camera.startFollow(this.currentPlayer, true);
+                }
+
+                if (switchKey.isUp) { this.switchingPlayer = false; }
+
+                if (this.gamepad) {
+                    this.currentPlayer.Run(Math.round(this.gamepad.axes[0].value));
+
+                    if (this.gamepad.axes[1].value < -0.5) { this.currentPlayer.Jump(); }
+                    if (this.gamepad.buttons[6].value > 0.5) { this.currentPlayer.Attack(); }
+                    if (this.gamepad.buttons[6].value < 0.5) { this.currentPlayer.EnableAttack(); }
+
+                    //Falta botón de cambio de personaje
+                } else {
+                    var keyObj = this.input.keyboard.addKey('E');
+
+                    if (this.cursors0.up.isDown) {
+                        this.currentPlayer.Jump();
+                    }
+
+                    this.input.on('pointerdown', function (pointer) {
+                        this.currentPlayer.Attack(this.input.mousePointer.worldX, this.input.mousePointer.worldY);
+                    }, this);
+
+                    this.input.on('pointerup', function (pointer) {
+                        this.currentPlayer.EnableAttack();
+                    }, this);
+
+                    if (this.cursors0.left.isDown) {
+                        this.currentPlayer.Run(-1);
+                    } else if (this.cursors0.right.isDown) {
+                        this.currentPlayer.Run(1);
+                    } else {
+                        this.currentPlayer.Run(0);
+                    }
                 }
                 break;
             case 1:
                 if (this.gamepad) {
+
+                    this.player0.Run(Math.round(this.gamepad.axes[0].value));
+
+                    if (this.gamepad.axes[1].value < -0.5) { this.player0.Jump(); }
+                    if (this.gamepad.buttons[6].value > 0.5) { this.player0.Attack(); }
+                    if (this.gamepad.buttons[6].value < 0.5) { this.player0.EnableAttack(); }
 
                     this.player1.Run(Math.round(this.gamepad.axes[2].value), delta);
 
@@ -257,15 +283,35 @@ class BaseScene extends Phaser.Scene {
                     if (this.gamepad.buttons[7].value < 0.5) { this.player1.EnableAttack(); }
 
                 } else {
-                    //P1
+                    var keyObj = this.input.keyboard.addKey('E');
+
+                    if (this.cursors0.up.isDown) {
+                        this.player0.Jump();
+                    }
+
+                    if (keyObj.isDown) {
+                        this.player0.Attack();
+                    }
+
+                    if (keyObj.isUp) {
+                        this.player0.EnableAttack();
+                    }
+
+                    if (this.cursors0.left.isDown) {
+                        this.player0.Run(-1);
+                    } else if (this.cursors0.right.isDown) {
+                        this.player0.Run(1);
+                    } else {
+                        this.player0.Run(0);
+                    }
 
 
                     if (this.cursors1.left.isDown) {
-                        this.player1.Run(-1, delta);
+                        this.player1.Run(-1);
                     } else if (this.cursors1.right.isDown) {
-                        this.player1.Run(1, delta);
+                        this.player1.Run(1);
                     } else {
-                        this.player1.Run(0, delta);
+                        this.player1.Run(0);
                     }
 
                     if (this.cursors1.up.isDown) {
@@ -283,7 +329,35 @@ class BaseScene extends Phaser.Scene {
                 break;
 
             case 2:
+                if (this.gamepad) {
+                    this.currentPlayer.Run(Math.round(this.gamepad.axes[0].value));
 
+                    if (this.gamepad.axes[1].value < -0.5) { this.currentPlayer.Jump(); }
+                    if (this.gamepad.buttons[6].value > 0.5) { this.currentPlayer.Attack(); }
+                    if (this.gamepad.buttons[6].value < 0.5) { this.currentPlayer.EnableAttack(); }
+                } else {
+                    var keyObj = this.input.keyboard.addKey('E');
+
+                    if (this.cursors0.up.isDown) {
+                        this.currentPlayer.Jump();
+                    }
+
+                    this.input.on('pointerdown', function (pointer) {
+                        this.currentPlayer.Attack(this.input.mousePointer.worldX, this.input.mousePointer.worldY);
+                    }, this);
+
+                    this.input.on('pointerup', function (pointer) {
+                        this.currentPlayer.EnableAttack();
+                    }, this);
+
+                    if (this.cursors0.left.isDown) {
+                        this.currentPlayer.Run(-1);
+                    } else if (this.cursors0.right.isDown) {
+                        this.currentPlayer.Run(1);
+                    } else {
+                        this.currentPlayer.Run(0);
+                    }
+                }
                 break;
 
             default:
@@ -311,14 +385,22 @@ class BaseScene extends Phaser.Scene {
     UpdateStage(time, delta) { }
 
     MeleeDamage(weapon, target) {
-        target.Hurt(10);
-        SendDamage(target.id, 10, this);
+        if (target.visible) {
+            target.Hurt(10);
+            if (gameMode == 2) {
+                SendDamage(target.id, 10, this);
+            }
+        }
     }
 
     ProjectileDamage(target, projectile) {
-        target.Hurt(100);
-        projectile.destroy();
-        SendDamage(target.id, 100, this);
+        if (target.visible) {
+            target.Hurt(100);
+            projectile.destroy();
+            if (gameMode == 2) {
+                SendDamage(target.id, 100, this);
+            }
+        }
     }
 
     ProjectileHitsWall(projectile, wall) {
@@ -366,7 +448,6 @@ class BaseScene extends Phaser.Scene {
     LoadScene(key) {
         if (!this.fading) {
             this.player0.body.setVelocityX(0);
-            if (gameMode != 2) { this.player1.body.setVelocityX(0); }
             this.fading = true;
             this.camera.fadeOut(500);
             switch (gameMode) {
@@ -374,6 +455,7 @@ class BaseScene extends Phaser.Scene {
 
                     break;
                 case 1:
+                    this.player1.body.setVelocityX(0);
                     this.camera1.fadeOut(500);
                     break;
                 case 2:

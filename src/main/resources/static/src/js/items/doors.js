@@ -63,11 +63,22 @@ class DungeonDoor extends Phaser.GameObjects.Sprite {
 	}
 
 	Update() {
-		if (gameMode == 2 && Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.y, this.x, this.y) < minDoorDistance) {
+		if (gameMode == 0) {
+			if (this.open && Phaser.Math.Distance.Between(this.scene.currentPlayer.x, this.scene.currentPlayer.y, this.x, this.y) < minDoorDistance) {
+				this.LoadTargetScene();
+			}
+		} else {
+			if (this.open && (Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.y, this.x, this.y) < minDoorDistance && Phaser.Math.Distance.Between(this.scene.player1.x, this.scene.player1.y, this.x, this.y) < minDoorDistance)) {
+				this.LoadTargetScene();
+			}
+		}
+
+
+		/*if (gameMode == 2 && Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.y, this.x, this.y) < minDoorDistance) {
 			this.LoadTargetScene();
 		} else if (gameMode == 1 && (Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.y, this.x, this.y) < minDoorDistance || Phaser.Math.Distance.Between(this.scene.player1.x, this.scene.player1.y, this.x, this.y)) < minDoorDistance) {
 			this.LoadTargetScene();
-		}
+		}*/
 	}
 
 	LoadTargetScene() {
@@ -105,9 +116,19 @@ class DungeonStairs extends Phaser.GameObjects.Sprite {
 	}
 
 	Update() {
-		if (Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.y, this.x, this.y) < minDoorDistance || Phaser.Math.Distance.Between(this.scene.player1.x, this.scene.player1.y, this.x, this.y) < minDoorDistance) {
-			this.LoadTargetScene();
+		if (gameMode == 0) {
+			if (this.open && Phaser.Math.Distance.Between(this.scene.currentPlayer.x, this.scene.currentPlayer.y, this.x, this.y) < minDoorDistance) {
+				this.LoadTargetScene();
+			}
+		} else {
+			if (this.open && (Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.y, this.x, this.y) < minDoorDistance && Phaser.Math.Distance.Between(this.scene.player1.x, this.scene.player1.y, this.x, this.y) < minDoorDistance)) {
+				this.LoadTargetScene();
+			}
 		}
+
+		/*if (Phaser.Math.Distance.Between(this.scene.player0.x, this.scene.player0.y, this.x, this.y) < minDoorDistance || Phaser.Math.Distance.Between(this.scene.player1.x, this.scene.player1.y, this.x, this.y) < minDoorDistance) {
+			this.LoadTargetScene();
+		}*/
 	}
 
 	LoadTargetScene() {

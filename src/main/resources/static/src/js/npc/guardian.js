@@ -101,43 +101,39 @@ class Guardian extends Enemy {
         if (this.scene && this.canMove) {
             if (this.body.blocked.left || this.body.blocked.right) { this.body.setVelocityY(0); }
 
-            if (Math.abs(this.scene.swordPlayer.x - this.x) > Math.abs(this.scene.bowPlayer.x - this.x)) {
-                this.primaryTarget = this.scene.bowPlayer;
-                this.secondaryTarget = this.scene.swordPlayer;
-            } else {
-                this.primaryTarget = this.scene.swordPlayer;
-                this.secondaryTarget = this.scene.bowPlayer;
-            }
+            this.FindTargets();
 
-            if (Math.abs(this.primaryTarget.x - this.x) > this.range) {
-                //Si está lejos se mueve
-                if (this.primaryTarget.x - 10 < this.x) {
-                    this.body.setVelocityX(-this.speed);
-                    this.flipX = false;
-                    this.anims.play('guardianMove', true);
+            if (this.primaryTarget) {
+                if (Math.abs(this.primaryTarget.x - this.x) > this.range) {
+                    //Si está lejos se mueve
+                    if (this.primaryTarget.x - 10 < this.x) {
+                        this.body.setVelocityX(-this.speed);
+                        this.flipX = false;
+                        this.anims.play('guardianMove', true);
 
+                    } else {
+                        this.body.setVelocityX(this.speed);
+                        this.flipX = true;
+                        this.anims.play('guardianMove', true);
+                    }
                 } else {
-                    this.body.setVelocityX(this.speed);
-                    this.flipX = true;
-                    this.anims.play('guardianMove', true);
-                }
-            } else {
-                //Si está cerca le pega
-                this.body.setVelocityX(0);
+                    //Si está cerca le pega
+                    this.body.setVelocityX(0);
 
-                if (this.primaryTarget.x + 10 < this.x) {
-                    this.flipX = false;
-                } else {
-                    this.flipX = true;
+                    if (this.primaryTarget.x + 10 < this.x) {
+                        this.flipX = false;
+                    } else {
+                        this.flipX = true;
+                    }
+
+                    if (this.canAttack && Math.abs(this.primaryTarget.y - this.y) < 64) {
+                        this.Attack();
+                    }
                 }
 
-                if (this.canAttack && Math.abs(this.primaryTarget.y - this.y) < 64) {
-                    this.Attack();
+                if ((Math.abs(this.primaryTarget.x - this.x) > this.dieDistance)) {
+                    this.Die();
                 }
-            }
-
-            if ((Math.abs(this.primaryTarget.x - this.x) > this.dieDistance)) {
-                this.Die();
             }
         }
     }
