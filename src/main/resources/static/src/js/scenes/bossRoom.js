@@ -40,6 +40,16 @@ class BossRoom extends BaseScene {
                         repeat: -1
                     });
 
+                    this.controls1 = this.add.sprite(900, this.player0.y - 32, 'SwitchPlayercontrols').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
+                    this.tweens.add({
+                        targets: this.controls1,
+                        y: this.controls0.y - 5,
+                        duration: 1500,
+                        ease: 'Sine.easeInOut',
+                        yoyo: true,
+                        repeat: -1
+                    });
+
                 } else {
                     this.currentPlayer.x = this.dungeonDoor.x - 80;
                 }
@@ -144,30 +154,31 @@ class BossRoom extends BaseScene {
     }
 
     UpdateStage() {
-        if (this.currentBoss && !this.currentBoss.awake) {
-            if (hasRelic) {
-                if (Math.abs(this.currentBoss.x - this.player0.x) < 200 && Math.abs(this.currentBoss.x - this.player1.x) < 200) {
-                    this.currentBoss.WakeUp();
-                    hasRelic = false;
-                }
+        if (!this.currentBoss || this.currentBoss.awake)
+            return;
 
-            } else {
-                if (defeatedBosses == 2) {
-                    if (!this.exitDoor.open) {
-                        if (gameMode == 2) {
-                            if (isOrange) { createRecord(player.nick, friend.name, ((new Date() - startTime) / 1000)); }
-                        } else {
-                            createRecord(player.nick, player.nick + "1", ((new Date() - startTime) / 1000));
-                        }
-                        this.exitDoor.Open();
+        if (hasRelic) {
+            if (Math.abs(this.currentBoss.x - this.player0.x) < 200 && (gameMode == 0 || Math.abs(this.currentBoss.x - this.player1.x) < 200)) {
+                this.currentBoss.WakeUp();
+                hasRelic = false;
+            }
+        } else {
+            if (defeatedBosses == 2) {
+                if (!this.exitDoor.open) {
+                    if (gameMode == 2) {
+                        if (isOrange) { createRecord(player.nick, friend.name, ((new Date() - startTime) / 1000)); }
+                    } else {
+                        createRecord(player.nick, player.nick + "1", ((new Date() - startTime) / 1000));
                     }
-                } else {
-                    this.RandomRelic();
-                    this.currentBoss = null;
-                    this.dungeonDoor.Open();
+                    this.exitDoor.Open();
                 }
+            } else {
+                this.RandomRelic();
+                this.currentBoss = null;
+                this.dungeonDoor.Open();
             }
         }
+
     }
 
     RandomRelic() {
