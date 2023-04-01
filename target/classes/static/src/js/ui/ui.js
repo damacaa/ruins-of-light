@@ -61,7 +61,7 @@ class UI extends BaseMenuScene {
                 this.scale.startFullscreen();
             }
         }, this);
-        this.fullscreen.setOrigin(1,0);
+        this.fullscreen.setOrigin(1, 0);
         this.fullscreen.x = 470;
         this.fullscreen.y = 10;
 
@@ -140,13 +140,13 @@ class UI extends BaseMenuScene {
             this.attack.setVisible(true);
         }
 
-        if (gameMode == 2 || true) {
+        if (gameMode == 2) {
             for (let b of this.buttons) {
                 b.setVisible(true);
             }
         }
 
-        this.fullscreen.setOrigin(1,0);
+        this.fullscreen.setOrigin(1, 0);
         this.fullscreen.x = 470;
         this.fullscreen.y = 10;
 

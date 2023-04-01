@@ -99,12 +99,13 @@ var CustomPipeline = new Phaser.Class({
         }
 });
 
-var config;
+
 var game;
 var customPipeline;
 
 window.onload = function () {
-    config = {
+
+    let config = {
         type: Phaser.WEBGL,
         pixelArt: true,
         roundPixels: false,

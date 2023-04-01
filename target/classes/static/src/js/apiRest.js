@@ -1,5 +1,9 @@
 //Load records from server
 function loadRecords() {
+
+	if (offline)
+		return;
+
 	if (isOnline) {
 		$.ajax({
 			method: "GET",
@@ -33,6 +37,10 @@ function loadRecords() {
 
 //Create record in server
 function createRecord(name1, name2, score) {
+
+	if (offline)
+		return;
+
 	if (isOnline) {
 		let record = {
 			nombre1: name1,
@@ -58,6 +66,10 @@ function createRecord(name1, name2, score) {
 
 //Join the server
 function joinGame(doneFunc, failFunc) {
+
+	if (offline)
+		return;
+
 	if (!joining) {
 		joining = true;
 		console.log("Conectando con: " + origin)
@@ -89,6 +101,10 @@ function joinGame(doneFunc, failFunc) {
 
 //Check player connection
 function checkPlayer() {
+
+	if (offline)
+		return;
+
 	if (isOnline) {
 		$.ajax({
 			method: "POST",
@@ -139,6 +155,10 @@ function checkPlayer() {
 let checkServerWait = 1000;
 //Check players every x seconds
 function checkServer() {
+
+	if (offline)
+		return;
+
 	if (isOnline) {
 		if (new Date() - lastTimeChecked > checkServerWait) {
 			lastTimeChecked = new Date();

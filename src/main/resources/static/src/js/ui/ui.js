@@ -52,7 +52,7 @@ class UI extends BaseMenuScene {
         }
 
 
-        this.fullscreen = this.add.sprite(10, 244, 'fullscreen').setDepth(9).setInteractive().setVisible(true);
+        /*this.fullscreen = this.add.sprite(10, 244, 'fullscreen').setDepth(9).setInteractive().setVisible(true);
         this.fullscreen.on('pointerdown', function (event) {
             if (this.scale.isFullscreen) {
                 this.scale.stopFullscreen();
@@ -63,7 +63,7 @@ class UI extends BaseMenuScene {
         }, this);
         this.fullscreen.setOrigin(1, 0);
         this.fullscreen.x = 470;
-        this.fullscreen.y = 10;
+        this.fullscreen.y = 10;*/
 
         if (this.mobile) {
             this.left = this.add.sprite(20, 200, 'phoneInput').setFrame(0).setOrigin(0).setDepth(9).setInteractive().setVisible(false);
@@ -146,9 +146,9 @@ class UI extends BaseMenuScene {
             }
         }
 
-        this.fullscreen.setOrigin(1, 0);
+        /*this.fullscreen.setOrigin(1, 0);
         this.fullscreen.x = 470;
-        this.fullscreen.y = 10;
+        this.fullscreen.y = 10;*/
 
         this.playerList.visible = false;
 

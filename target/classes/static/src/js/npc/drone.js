@@ -80,13 +80,7 @@ class Drone extends Enemy {
 
     Update() {
         if (this.scene && this.canMove) {
-            if (Math.abs(this.scene.swordPlayer.x - this.x) > Math.abs(this.scene.bowPlayer.x - this.x)) {
-                this.primaryTarget = this.scene.bowPlayer;
-                this.secondaryTarget = this.scene.swordPlayer;
-            } else {
-                this.primaryTarget = this.scene.swordPlayer;
-                this.secondaryTarget = this.scene.bowPlayer;
-            }
+            this.FindTargets();
 
             if (this.primaryTarget.y - this.y < 100) {
                 this.body.setVelocityY(Math.abs(this.primaryTarget.y - this.y) - Math.abs(this.primaryTarget.x - this.x));
@@ -94,41 +88,41 @@ class Drone extends Enemy {
 
             if (this.body.blocked.left || this.body.blocked.right) { this.body.setVelocityY(100); }
 
+            if (this.primaryTarget) {
+                if (Math.abs(this.primaryTarget.x - this.x) > this.range) {
+                    if (this.primaryTarget.x - 10 < this.x) {
+                        this.body.setVelocityX(-this.speed);
+                        this.flipX = false;
+                        this.anims.play('flyLeft', true);
 
-            if (Math.abs(this.primaryTarget.x - this.x) > this.range) {
-                if (this.primaryTarget.x - 10 < this.x) {
-                    this.body.setVelocityX(-this.speed);
-                    this.flipX = false;
-                    this.anims.play('flyLeft', true);
-
-                } else if (this.primaryTarget.x + 10 > this.x) {
-                    this.body.setVelocityX(this.speed);
-                    this.flipX = true;
-                    this.anims.play('flyLeft', true);
-                }
-            } else {
-
-                this.body.setVelocityX(0);
-
-                if (this.primaryTarget.x < this.x) {
-                    this.flipX = false;
+                    } else if (this.primaryTarget.x + 10 > this.x) {
+                        this.body.setVelocityX(this.speed);
+                        this.flipX = true;
+                        this.anims.play('flyLeft', true);
+                    }
                 } else {
-                    this.flipX = true;
+
+                    this.body.setVelocityX(0);
+
+                    if (this.primaryTarget.x < this.x) {
+                        this.flipX = false;
+                    } else {
+                        this.flipX = true;
+                    }
+
+                    if (this.canAttack && this.scene.camera.worldView.contains(this.x, this.y)) {
+                        this.Attack();
+
+                    } else {
+                        this.anims.play('idleDrone', true);
+                    }
                 }
 
-                if (this.canAttack && this.scene.camera.worldView.contains(this.x, this.y)) {
-                    this.Attack();
-
-                } else {
-                    this.anims.play('idleDrone', true);
+                if ((Math.abs(this.primaryTarget.x - this.x) > this.dieDistance)) {
+                    this.Die();
                 }
-            }
-
-            if ((Math.abs(this.primaryTarget.x - this.x) > this.dieDistance)) {
-                this.Die();
             }
         }
-
     }
 
     Attack() {
@@ -138,7 +132,7 @@ class Drone extends Enemy {
         this.canAttack = false;
         this.attacking = true;
 
-        this.shotDown = new Shot(this.scene, this.x, this.y+8, this.flipX, this.primaryTarget.x, this.primaryTarget.y+8);
+        this.shotDown = new Shot(this.scene, this.x, this.y + 8, this.flipX, this.primaryTarget.x, this.primaryTarget.y + 8);
         this.scene.sound.play("effectDrone");
 
         this.scene.time.delayedCall(this.wait, function () {

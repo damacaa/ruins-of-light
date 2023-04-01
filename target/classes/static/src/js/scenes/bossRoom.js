@@ -4,10 +4,6 @@ class BossRoom extends BaseScene {
     }
 
     CreateStage() {
-        if (gameMode == 1) {
-            this.camera.startFollow(this.bowPlayer, true);
-            this.DisableSplitScreen();
-        } else { this.camera.startFollow(this.player0, true); }
 
         this.bg = this.add.sprite(0, -32, 'bossBackground').setOrigin(0, 0).setScrollFactor(.25).setDepth(-2);
 
@@ -26,32 +22,60 @@ class BossRoom extends BaseScene {
         this.add.image(this.gorila.x + 8, this.gorila.y + 64 + 64 + 32, 'bossAltar').setDepth(0);
         this.add.image(this.parrot.x + 48, this.parrot.y + 64 + 19, 'bossAltar').setDepth(0);
 
-        if (!firstTimeBoss) {
-            if (gameMode == 2) {
-                if (isOrange) { this.player0.x = this.dungeonDoor.x - 80; } else { this.player0.x = this.dungeonDoor.x - 48; }
-            } else {
-                this.player0.x = this.dungeonDoor.x - 80;
-                this.player1.x = this.dungeonDoor.x - 48;
-                this.player0.y = this.dungeonDoor.y;
-                this.player1.y = this.dungeonDoor.y;
-            }
+        switch (gameMode) {
+            case 0:
+                this.camera.startFollow(this.currentPlayer, true);
+                if (firstTimeBoss) {
+                    this.currentPlayer.x = this.exitDoor.x + 80;
+                    this.RandomRelic();
+                    firstTimeBoss = false;
 
-            this.player0.flipX = true;
-            this.player1.flipX = true;
-        } else {
-            if (gameMode == 2) {
-                if (isOrange) { this.player0.x = this.exitDoor.x + 80; } else { this.player0.x = this.exitDoor.x + 48; }
-            } else {
-                this.player0.x = this.exitDoor.x + 80;
-                this.player1.x = this.exitDoor.x + 48;
-                this.player0.y = this.exitDoor.y;
-                this.player1.y = this.exitDoor.y;
-            }
+                    this.controls0 = this.add.sprite(this.player0.x, this.player0.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
+                    this.tweens.add({
+                        targets: this.controls0,
+                        y: this.controls0.y - 5,
+                        duration: 1500,
+                        ease: 'Sine.easeInOut',
+                        yoyo: true,
+                        repeat: -1
+                    });
 
-            this.RandomRelic();
-            if (!ui.mobile) {
-                this.controls0 = this.add.sprite(this.player0.x, this.player0.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
-                if (gameMode != 2) {
+                    this.controls1 = this.add.sprite(900, this.player0.y - 32, 'SwitchPlayercontrols').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
+                    this.tweens.add({
+                        targets: this.controls1,
+                        y: this.controls0.y - 5,
+                        duration: 1500,
+                        ease: 'Sine.easeInOut',
+                        yoyo: true,
+                        repeat: -1
+                    });
+
+                } else {
+                    this.currentPlayer.x = this.dungeonDoor.x - 80;
+                }
+
+                break;
+            case 1:
+                this.camera.startFollow(this.bowPlayer, true);
+                this.DisableSplitScreen();
+                if (firstTimeBoss) {
+                    this.player0.x = this.exitDoor.x + 80;
+                    this.player1.x = this.exitDoor.x + 48;
+                    this.player0.y = this.exitDoor.y;
+                    this.player1.y = this.exitDoor.y;
+                    this.RandomRelic();
+                    firstTimeBoss = false;
+
+                    this.controls0 = this.add.sprite(this.player0.x, this.player0.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(0).setDepth(10);
+                    this.tweens.add({
+                        targets: this.controls0,
+                        y: this.controls0.y - 5,
+                        duration: 1500,
+                        ease: 'Sine.easeInOut',
+                        yoyo: true,
+                        repeat: -1
+                    });
+
                     this.controls1 = this.add.sprite(this.player1.x, this.player1.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
                     this.tweens.add({
                         targets: this.controls1,
@@ -61,19 +85,44 @@ class BossRoom extends BaseScene {
                         yoyo: true,
                         repeat: -1
                     });
-                }
+                } else {
+                    this.player0.x = this.dungeonDoor.x - 80;
+                    this.player1.x = this.dungeonDoor.x - 48;
+                    this.player0.y = this.dungeonDoor.y;
+                    this.player1.y = this.dungeonDoor.y;
 
-                this.tweens.add({
-                    targets: this.controls0,
-                    y: this.controls0.y - 5,
-                    duration: 1500,
-                    ease: 'Sine.easeInOut',
-                    yoyo: true,
-                    repeat: -1
-                });
-            }
-            firstTimeBoss = false;
+                    this.player0.flipX = true;
+                    this.player1.flipX = true;
+                }
+                break;
+            case 2:
+                this.camera.startFollow(this.currentPlayer, true);
+                if (firstTimeBoss) {
+                    if (isOrange) { this.player0.x = this.exitDoor.x + 80; } else { this.player0.x = this.exitDoor.x + 48; }
+                    this.RandomRelic();
+                    firstTimeBoss = false;
+
+                    this.controls0 = this.add.sprite(this.player0.x, this.player0.y - 32, 'Attackcontrols').setOrigin(0.5, 0.5).setFrame(1).setDepth(10);
+                    this.tweens.add({
+                        targets: this.controls0,
+                        y: this.controls0.y - 5,
+                        duration: 1500,
+                        ease: 'Sine.easeInOut',
+                        yoyo: true,
+                        repeat: -1
+                    });
+                } else {
+                    if (isOrange) { this.player0.x = this.dungeonDoor.x - 80; } else { this.player0.x = this.dungeonDoor.x - 48; }
+                    this.player0.flipX = true;
+                    this.player1.flipX = true;
+                }
+                break;
+
+            default:
+                break;
         }
+
+
 
         //Dependiendo del número de bosses derrotados se activa el siguiente boss
         this.sound.stopAll();
@@ -105,30 +154,31 @@ class BossRoom extends BaseScene {
     }
 
     UpdateStage() {
-        if (this.currentBoss && !this.currentBoss.awake) {
-            if (hasRelic) {
-                if (Math.abs(this.currentBoss.x - this.player0.x) < 200 && Math.abs(this.currentBoss.x - this.player1.x) < 200) {
-                    this.currentBoss.WakeUp();
-                    hasRelic = false;
-                }
+        if (!this.currentBoss || this.currentBoss.awake)
+            return;
 
-            } else {
-                if (defeatedBosses == 2) {
-                    if (!this.exitDoor.open) {
-                        if (gameMode == 2) {
-                            if (isOrange) { createRecord(player.nick, friend.name, ((new Date() - startTime) / 1000)); }
-                        } else {
-                            createRecord(player.nick, player.nick + "1", ((new Date() - startTime) / 1000));
-                        }
-                        this.exitDoor.Open();
+        if (hasRelic) {
+            if (Math.abs(this.currentBoss.x - this.player0.x) < 200 && (gameMode == 0 || Math.abs(this.currentBoss.x - this.player1.x) < 200)) {
+                this.currentBoss.WakeUp();
+                hasRelic = false;
+            }
+        } else {
+            if (defeatedBosses == 2) {
+                if (!this.exitDoor.open) {
+                    if (gameMode == 2) {
+                        if (isOrange) { createRecord(player.nick, friend.name, ((new Date() - startTime) / 1000)); }
+                    } else {
+                        createRecord(player.nick, player.nick + "1", ((new Date() - startTime) / 1000));
                     }
-                } else {
-                    this.RandomRelic();
-                    this.currentBoss = null;
-                    this.dungeonDoor.Open();
+                    this.exitDoor.Open();
                 }
+            } else {
+                this.RandomRelic();
+                this.currentBoss = null;
+                this.dungeonDoor.Open();
             }
         }
+
     }
 
     RandomRelic() {

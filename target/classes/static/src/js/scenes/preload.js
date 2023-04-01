@@ -215,6 +215,13 @@ class Preload extends Phaser.Scene {
             }
             );
 
+            this.load.spritesheet('SwitchPlayercontrols',
+                'resources/img/Interfaz/SwitchPlayer.png', {
+                frameWidth: 17,
+                frameHeight: 18
+            }
+            );
+
             this.load.spritesheet('emoji',
                 'resources/img/Emojis/emojis.png', {
                 frameWidth: 16,

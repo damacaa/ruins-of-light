@@ -291,11 +291,19 @@ class MainMenu extends BaseMenuScene {
             color: '#eeeeba'
         }).setOrigin(0.5).setDepth(10).setResolution(3).setInteractive();
 
+        if (!isOnline) {
+            this.online.setColor('#a6a683');
+        }
+
         this.leaderBoard = this.add.text(240, 190, 'Leaderboard', {
             fontFamily: '"PressStart2P-Regular"',
             fontSize: '16px',
             color: '#eeeeba'
         }).setOrigin(0.5).setDepth(10).setResolution(3).setInteractive();
+
+        if (!isOnline) {
+            this.leaderBoard.setColor('#a6a683');
+        }
 
         this.credits = this.add.text(240, 220, 'Credits', {
             fontFamily: '"PressStart2P-Regular"',
@@ -315,8 +323,10 @@ class MainMenu extends BaseMenuScene {
         }, this);
 
         this.online.on('pointerdown', function (event) {
-            this.StartGame();
-            gameMode = 2;
+            if (isOnline) {
+                this.StartGame();
+                gameMode = 2;
+            }
         }, this);
 
         this.credits.on('pointerdown', function (event) {
@@ -324,7 +334,8 @@ class MainMenu extends BaseMenuScene {
         }, this);
 
         this.leaderBoard.on('pointerdown', function (event) {
-            this.scene.start('leaderBoard');
+            if (isOnline)
+                this.scene.start('leaderBoard');
         }, this);
     }
 
@@ -710,6 +721,7 @@ class ErrorJoining extends BaseMenuScene {
                     o.Press = function () {
                         gameMode = 1;
                         currentScene.LoadScene('mainMenu');
+                        offline = true;
                     }
 
                     o.AdjustBlock = function () {
